@@ -107,7 +107,8 @@ def main():
     L.append(f"% ratio range: between {rmin:.2f} and {rmax:.2f}")
     L.append("% Suggested sentence: `while the binary-search wrapper was "
              f"between ${rmin:.2f}$ and ${rmax:.2f}$ times the cost of a "
-             "single base-DP call'")
+             "single base-DP call (ratios computed from the unrounded "
+             "timings)'")
 
     with open(OUT, "w", encoding="utf-8") as fh:
         fh.write("\n".join(L) + "\n")
