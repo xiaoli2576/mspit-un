@@ -297,6 +297,16 @@ def test_mcspit_feasible():
     print("PASS: test_mcspit_feasible")
 
 
+def test_mcspit_exact_match_plateau():
+    """MCSPIT: an exact match on a plateau must return its minimum budget."""
+    t = make_star_tree(4, [1, 1, 1], [2, 2, 2])
+    K_star, opt_val, S = solve_mcspit_unu(t, 2)
+    assert K_star == 1, f"Expected K_star=1, got {K_star}"
+    assert opt_val == 2, f"Expected opt_val=2, got {opt_val}"
+    assert S == {0}, f"Expected root upgrade only, got {S}"
+    print("PASS: test_mcspit_exact_match_plateau")
+
+
 def test_mcspit_d_zero():
     """MCSPIT: D=0 should require 0 upgrades."""
     t = random_tree(7, seed=77)
@@ -350,6 +360,7 @@ def run_all():
         test_example1_all_k,
         test_random_trees_vs_brute_force,
         test_mcspit_feasible,
+        test_mcspit_exact_match_plateau,
         test_mcspit_d_zero,
         test_mcspit_infeasible,
         test_mcspit_vs_mspit,

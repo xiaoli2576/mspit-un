@@ -49,11 +49,9 @@ def solve_mcspit_unu(tree: Tree, D: float):
 
         if val < D:
             k1 = k
-        elif val > D:
-            k2 = k
         else:
-            # Exact match — return immediately
-            return k, val, S
+            # A feasible budget, including an exact match, may not be minimum.
+            k2 = k
 
     # Final call with k2 (line 18-19)
     val, S = solve_mspit_unu(tree, k2)
