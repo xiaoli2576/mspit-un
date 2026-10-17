@@ -11,7 +11,7 @@ The worked example uses the weight vector w(e2..e10) = (6, 7, 4, 1, 8, 4,
 transcription error in this vector; the values here are the ones consistent
 with the g-table, e.g. g(chi_v3, 0, 0) = w(e3) = 7 and
 g(chi_v6, 1, 1) = u(e5) + w(e6) = 18, which forces w(e5) = 1, w(e6) = 8).
-`paper_tables.py` verifies every table cell of the manuscript appendix
+`paper_tables.py` verifies every table cell of the worked example (Online Resource 1)
 against an independent brute-force enumeration.
 
 ## 2. Lemma 1 Reordering Scope

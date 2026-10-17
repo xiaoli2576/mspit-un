@@ -1,11 +1,11 @@
 """
-mcspit_un.py  —  Algorithm 2: Binary search for MCSPIT-UNu.
+mcspit_un.py  —  MCSPIT-UNu solvers: budget doubling (Algorithm 2, Theorem 14) one DP run at K=n, and binary search.
 
 Problem: Given tree T=(V,E,w) rooted at v1, upgraded weights u(e)>=w(e),
          and lower bound D on min root-leaf distance, find the MINIMUM
          number of nodes to upgrade so that min_{leaf t} d(root,t) >= D.
 
-Algorithm 2 from the paper:
+Earlier binary-search solver (solve_mcspit_unu), kept for reference:
   1. Check feasibility at K=n. If F(T,n) < D, return infeasible.
   2. Check the early-exit case K=0.
   3. Binary search over K in [0, n].
@@ -69,3 +69,23 @@ def solve_mcspit_unu_oneshot(tree: Tree, D: float, method='pairs'):
     k_star = next(k for k, val in enumerate(prof) if val >= D)
     val, S = solve_mspit_unu(tree, k_star, method=method)
     return k_star, val, S
+
+
+def solve_mcspit_unu_doubling(tree: Tree, D: float, method='pairs'):
+    """MCSPIT-UNu by budget doubling: run the DP with K = 1, 2, 4, ... (capped
+    at n) and stop at the first run whose root profile reaches D.  Same output
+    as solve_mcspit_unu.  Time and space O(n max{K*,1}) when feasible; an
+    infeasible instance ends with the run at K = n, i.e. O(n^2)."""
+    from mspit_un import root_profile
+    n = tree.n
+    K = 1
+    while True:
+        prof = root_profile(tree, K, method=method)
+        hit = next((k for k, val in enumerate(prof) if val >= D), None)
+        if hit is not None:
+            val, S = solve_mspit_unu(tree, hit, method=method)
+            return hit, val, S
+        # The profile saturates once K exceeds the number of useful upgrades.
+        if K >= n or len(prof) <= K:
+            return None, None, None
+        K = min(2 * K, n)

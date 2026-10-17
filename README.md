@@ -21,15 +21,16 @@ root-to-leaf distance is at least D.
 |------|-------------|
 | `tree.py` | Tree data structure: BFS, Layer/CD/CA computation, chain construction |
 | `mspit_un.py` | Algorithm 1 for MSPIT-UNu: O(nK) DP with size-capped merge (default); the earlier loops are kept as `method='v1'` / `'kk'` |
-| `mcspit_un.py` | MCSPIT-UNu: one DP run at K=n (`solve_mcspit_unu_oneshot`, O(n^2)) and the earlier binary search (`solve_mcspit_unu`) |
+| `mcspit_un.py` | MCSPIT-UNu: budget doubling (`solve_mcspit_unu_doubling`, O(nK*), Theorem 14), one DP run at K=n (`solve_mcspit_unu_oneshot`, O(n^2)) and the earlier binary search (`solve_mcspit_unu`) |
 | `brute.py` | Brute-force verifier for small trees (enumerates all subsets) |
 | `example.py` | Reproduces the worked example from the paper (10-node tree) |
-| `paper_tables.py` | Verifies EVERY appendix table cell against an independent brute force; emits the LaTeX tables |
+| `paper_tables.py` | Verifies EVERY worked-example table cell (Online Resource 1) against an independent brute force; emits the LaTeX tables |
 | `experiments.py` | Timing harness (random recursive trees + structured stress families); archives raw JSON to `results/` |
 | `gen_latex_tables.py` | Generates the manuscript experiment tables from an archived results JSON |
 | `test_basic.py` | Unit tests and brute-force cross-checks |
 | `verify_onk.py` | Checks the O(nK) DP against brute force and cell by cell against the earlier DP |
 | `bench_onk.py` | Timing runs for the v1.1.0 manuscript (writes `results/onk-bench-20261016.json`) |
+| `bench_edge.py` | v1.2.0 manuscript, Section 5: brute-force validation (node, edge, MCSPIT), edge-model comparison with the O(NK^2) DP of Lei et al. and its capped version, doubling timings, structured families (writes `results/edge-bench-20261016.json`) |
 | `results/` | Raw timing archives (JSON + log); canonical source of every number in the paper |
 
 ## Quick Start
@@ -72,10 +73,10 @@ python example.py
 ```
 
 Reproduces the worked example (F(T_{v1}, 1) = 13, S = {v1}), cross-checks
-it by brute force, and verifies every cell of the paper's two appendix
+it by brute force, and verifies every cell of the paper's two worked-example
 tables against an independent enumeration (via `paper_tables.py`).
 
-To regenerate the LaTeX sources of the appendix tables:
+To regenerate the LaTeX sources of the worked-example tables (Online Resource 1):
 
 ```
 python paper_tables.py
