@@ -1,0 +1,188 @@
+T1 n=50 v1: avg 0.0015s
+T1 n=50 kk: avg 0.0002s
+T1 n=50 pairs: avg 0.0001s
+T1 n=100 v1: avg 0.0053s
+T1 n=100 kk: avg 0.0005s
+T1 n=100 pairs: avg 0.0003s
+T1 n=200 v1: avg 0.0219s
+T1 n=200 kk: avg 0.0017s
+T1 n=200 pairs: avg 0.0008s
+T1 n=500 v1: avg 0.1401s
+T1 n=500 kk: avg 0.0073s
+T1 n=500 pairs: avg 0.0036s
+T1 n=1000 v1: avg 0.7079s
+T1 n=1000 kk: avg 0.0237s
+T1 n=1000 pairs: avg 0.0124s
+T1 n=2000 v1: avg 2.7709s
+T1 n=2000 kk: avg 0.0845s
+T1 n=2000 pairs: avg 0.0440s
+T2 n=50 v1: avg 0.0094s K*=[1, 2, 1]
+T2 n=50 kk: avg 0.0015s K*=[1, 2, 1]
+T2 n=50 pairs: avg 0.0012s K*=[1, 2, 1]
+T2 n=50 oneshot: avg 0.0003s K*=[1, 2, 1]
+T2 n=100 v1: avg 0.0149s K*=[0, 1, 0]
+T2 n=100 kk: avg 0.0020s K*=[0, 1, 0]
+T2 n=100 pairs: avg 0.0013s K*=[0, 1, 0]
+T2 n=100 oneshot: avg 0.0005s K*=[0, 1, 0]
+T2 n=200 v1: avg 0.1253s K*=[1, 1, 1]
+T2 n=200 kk: avg 0.0123s K*=[1, 1, 1]
+T2 n=200 pairs: avg 0.0078s K*=[1, 1, 1]
+T2 n=200 oneshot: avg 0.0015s K*=[1, 1, 1]
+T2 n=500 v1: avg 0.7141s K*=[1, 1, 1]
+T2 n=500 kk: avg 0.0413s K*=[1, 1, 1]
+T2 n=500 pairs: avg 0.0259s K*=[1, 1, 1]
+T2 n=500 oneshot: avg 0.0047s K*=[1, 1, 1]
+T2 n=1000 v1: avg 3.3623s K*=[1, 1, 1]
+T2 n=1000 kk: avg 0.1339s K*=[1, 1, 1]
+T2 n=1000 pairs: avg 0.0762s K*=[1, 1, 1]
+T2 n=1000 oneshot: avg 0.0156s K*=[1, 1, 1]
+T2 n=2000 v1: avg 13.1856s K*=[1, 2, 1]
+T2 n=2000 kk: avg 0.4209s K*=[1, 2, 1]
+T2 n=2000 pairs: avg 0.2343s K*=[1, 2, 1]
+T2 n=2000 oneshot: avg 0.0510s K*=[1, 2, 1]
+S Path n=100 v1: 0.0002s
+S Path n=100 kk: 0.0000s
+S Path n=100 pairs: 0.0000s
+S Path n=200 v1: 0.0006s
+S Path n=200 kk: 0.0001s
+S Path n=200 pairs: 0.0000s
+S Path n=500 v1: 0.0032s
+S Path n=500 kk: 0.0004s
+S Path n=500 pairs: 0.0001s
+S Path n=1000 v1: 0.0126s
+S Path n=1000 kk: 0.0017s
+S Path n=1000 pairs: 0.0001s
+S Path n=2000 v1: 0.0566s
+S Path n=2000 kk: 0.0068s
+S Path n=2000 pairs: 0.0003s
+S Comb n=100 v1: 0.0362s
+S Comb n=100 kk: 0.0011s
+S Comb n=100 pairs: 0.0005s
+S Comb n=200 v1: 0.2607s
+S Comb n=200 kk: 0.0039s
+S Comb n=200 pairs: 0.0016s
+S Comb n=500 v1: 4.7674s
+S Comb n=500 kk: 0.0213s
+S Comb n=500 pairs: 0.0076s
+S Comb n=1000 v1: 42.3032s
+S Comb n=1000 kk: 0.0828s
+S Comb n=1000 pairs: 0.0331s
+S Comb n=2000 kk: 0.3383s
+S Comb n=2000 pairs: 0.1270s
+S Comb-rev n=100 v1: 0.0288s
+S Comb-rev n=100 kk: 0.0029s
+S Comb-rev n=100 pairs: 0.0007s
+S Comb-rev n=200 v1: 0.1976s
+S Comb-rev n=200 kk: 0.0162s
+S Comb-rev n=200 pairs: 0.0022s
+S Comb-rev n=500 v1: 3.5728s
+S Comb-rev n=500 kk: 0.2228s
+S Comb-rev n=500 pairs: 0.0128s
+S Comb-rev n=1000 v1: 31.1051s
+S Comb-rev n=1000 kk: 1.7534s
+S Comb-rev n=1000 pairs: 0.0572s
+S Comb-rev n=2000 kk: 14.5478s
+S Comb-rev n=2000 pairs: 0.2291s
+S Star n=100 v1: 0.0016s
+S Star n=100 kk: 0.0003s
+S Star n=100 pairs: 0.0003s
+S Star n=200 v1: 0.0052s
+S Star n=200 kk: 0.0006s
+S Star n=200 pairs: 0.0005s
+S Star n=500 v1: 0.0313s
+S Star n=500 kk: 0.0017s
+S Star n=500 pairs: 0.0014s
+S Star n=1000 v1: 0.1255s
+S Star n=1000 kk: 0.0030s
+S Star n=1000 pairs: 0.0029s
+S Star n=2000 v1: 0.4885s
+S Star n=2000 kk: 0.0068s
+S Star n=2000 pairs: 0.0053s
+S Layered 4-ary n=100 v1: 0.0023s
+S Layered 4-ary n=100 kk: 0.0004s
+S Layered 4-ary n=100 pairs: 0.0003s
+S Layered 4-ary n=200 v1: 0.0081s
+S Layered 4-ary n=200 kk: 0.0010s
+S Layered 4-ary n=200 pairs: 0.0007s
+S Layered 4-ary n=500 v1: 0.0429s
+S Layered 4-ary n=500 kk: 0.0030s
+S Layered 4-ary n=500 pairs: 0.0021s
+S Layered 4-ary n=1000 v1: 0.1390s
+S Layered 4-ary n=1000 kk: 0.0109s
+S Layered 4-ary n=1000 pairs: 0.0055s
+S Layered 4-ary n=2000 v1: 0.5567s
+S Layered 4-ary n=2000 kk: 0.0288s
+S Layered 4-ary n=2000 pairs: 0.0169s
+KS Comb-rev n=1000 K=50 v1: 4.9728s
+KS Comb-rev n=1000 K=50 kk: 0.0876s
+KS Comb-rev n=1000 K=50 pairs: 0.0156s
+KS Comb-rev n=1000 K=100 v1: 10.3129s
+KS Comb-rev n=1000 K=100 kk: 0.2913s
+KS Comb-rev n=1000 K=100 pairs: 0.0248s
+KS Comb-rev n=1000 K=300 v1: 31.2554s
+KS Comb-rev n=1000 K=300 kk: 1.7140s
+KS Comb-rev n=1000 K=300 pairs: 0.0554s
+KS Comb-rev n=1000 K=600 kk: 2.7375s
+KS Comb-rev n=1000 K=600 pairs: 0.0654s
+KS Comb-rev n=1000 K=1000 kk: 2.7096s
+KS Comb-rev n=1000 K=1000 pairs: 0.0666s
+KS Comb n=1000 K=50 v1: 7.2326s
+KS Comb n=1000 K=50 kk: 0.0200s
+KS Comb n=1000 K=50 pairs: 0.0090s
+KS Comb n=1000 K=100 v1: 14.4856s
+KS Comb n=1000 K=100 kk: 0.0362s
+KS Comb n=1000 K=100 pairs: 0.0194s
+KS Comb n=1000 K=300 v1: 40.6684s
+KS Comb n=1000 K=300 kk: 0.0799s
+KS Comb n=1000 K=300 pairs: 0.0299s
+KS Comb n=1000 K=600 kk: 0.0976s
+KS Comb n=1000 K=600 pairs: 0.0371s
+KS Comb n=1000 K=1000 kk: 0.0982s
+KS Comb n=1000 K=1000 pairs: 0.0841s
+KS Random n=2000 (seed 42+1000n) K=100 v1: 0.7851s
+KS Random n=2000 (seed 42+1000n) K=100 kk: 0.0293s
+KS Random n=2000 (seed 42+1000n) K=100 pairs: 0.0142s
+KS Random n=2000 (seed 42+1000n) K=200 v1: 1.3667s
+KS Random n=2000 (seed 42+1000n) K=200 kk: 0.0422s
+KS Random n=2000 (seed 42+1000n) K=200 pairs: 0.0205s
+KS Random n=2000 (seed 42+1000n) K=600 v1: 3.0883s
+KS Random n=2000 (seed 42+1000n) K=600 kk: 0.0864s
+KS Random n=2000 (seed 42+1000n) K=600 pairs: 0.0401s
+KS Random n=2000 (seed 42+1000n) K=1200 v1: 4.5689s
+KS Random n=2000 (seed 42+1000n) K=1200 kk: 0.1033s
+KS Random n=2000 (seed 42+1000n) K=1200 pairs: 0.0498s
+KS Random n=2000 (seed 42+1000n) K=2000 v1: 4.4777s
+KS Random n=2000 (seed 42+1000n) K=2000 kk: 0.1166s
+KS Random n=2000 (seed 42+1000n) K=2000 pairs: 0.0488s
+slope T1 v1 (n>=200): 2.12
+slope T1 kk (n>=200): 1.71
+slope T1 pairs (n>=200): 1.72
+slope T2 v1 (n>=200): 2.04
+slope T2 kk (n>=200): 1.54
+slope T2 pairs (n>=200): 1.48
+slope T2 oneshot (n>=200): 1.53
+slope S Path v1: 1.88
+slope S Path kk: 1.76
+slope S Path pairs: 0.93
+slope S Comb v1: 3.08
+slope S Comb kk: 1.9
+slope S Comb pairs: 1.84
+slope S Comb-rev v1: 3.05
+slope S Comb-rev kk: 2.86
+slope S Comb-rev pairs: 1.95
+slope S Star v1: 1.92
+slope S Star kk: 1.0
+slope S Star pairs: 1.0
+slope S Layered 4-ary v1: 1.82
+slope S Layered 4-ary kk: 1.45
+slope S Layered 4-ary pairs: 1.32
+slope KS Comb-rev n=1000 v1 (vs K): 1.02
+slope KS Comb-rev n=1000 kk (vs K): 1.2
+slope KS Comb-rev n=1000 pairs (vs K): 0.51
+slope KS Comb n=1000 v1 (vs K): 0.96
+slope KS Comb n=1000 kk (vs K): 0.55
+slope KS Comb n=1000 pairs (vs K): 0.64
+slope KS Random n=2000 (seed 42+1000n) v1 (vs K): 0.62
+slope KS Random n=2000 (seed 42+1000n) kk (vs K): 0.48
+slope KS Random n=2000 (seed 42+1000n) pairs (vs K): 0.44
+written C:\Users\23857\VScode\MSPITUN\code\results\onk-bench-20261016.json

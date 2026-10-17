@@ -56,3 +56,16 @@ def solve_mcspit_unu(tree: Tree, D: float):
     # Final call with k2 (line 18-19)
     val, S = solve_mspit_unu(tree, k2)
     return k2, val, S
+
+
+def solve_mcspit_unu_oneshot(tree: Tree, D: float, method='pairs'):
+    """MCSPIT-UNu from ONE DP run at K=n (root profile F(T,k), all k), plus
+    one run at K* to recover a witness set.  Same output as solve_mcspit_unu.
+    Time O(n^2) (+ O(n K*)) with the O(nK) DP, vs O(n^2 log n) for bisection."""
+    from mspit_un import root_profile
+    prof = root_profile(tree, tree.n, method=method)
+    if prof[-1] < D:
+        return None, None, None
+    k_star = next(k for k, val in enumerate(prof) if val >= D)
+    val, S = solve_mspit_unu(tree, k_star, method=method)
+    return k_star, val, S

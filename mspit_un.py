@@ -201,8 +201,12 @@ def _build_g_tables(tree, K):
 # Main DP solver
 # --------------------------------------------------------------------------
 
-def solve_mspit_unu(tree: Tree, K: int, return_tables=False):
+def _solve_mspit_unu_v1(tree: Tree, K: int, return_tables=False):
     """
+    ORIGINAL (v1) implementation, kept verbatim for comparison
+    (method='v1' in solve_mspit_unu).  Recomputes subtree sizes
+    recursively inside the loops and stores frozensets per DP cell.
+
     Solve MSPIT-UNu.  Returns (optimal_value, S), or
     (optimal_value, S, tables) when return_tables=True, where tables
     exposes the internal DP dictionaries for verification / paper-table
@@ -426,3 +430,242 @@ def solve_mspit_unu(tree: Tree, K: int, return_tables=False):
         return opt, S, tables
 
     return opt, S
+
+
+# ==========================================================================
+# v2 implementation (2026-10-16): O(nK) time via size-capped pair loops.
+#
+#   method='pairs' : every recursion enumerates only FEASIBLE PAIRS
+#                    (k1,k2), each index capped by min(#non-leaf nodes of its
+#                    part, K), and writes into result[k1+k2(-eps)].
+#                    Merge cost per (v,q) = O(min(B_q,K) * min(B_{1:q-1},K));
+#                    total O(nK) by the capped tree-knapsack charging lemma
+#                    (see revision/complexity-onk-20261016.md).
+#   method='kk'    : same data structures, but the merge uses the paper's
+#                    literal loop "for k, for k1 in [eps, min(B_q,K)]", i.e.
+#                    O(min(B_{1:q},K) * min(B_q,K)) per (v,q) -> O(nK^2).
+#                    Isolates the algorithmic gain from implementation gains.
+#   method='v1'    : the original implementation (_solve_mspit_unu_v1).
+#
+# Both v2 methods precompute subtree sizes once (O(n)), build g by prefix
+# sums (O(sum beta)), and store an O(1) back-pointer per DP cell; the optimal
+# set is recovered by one top-down traceback (O(n)).  Values are exact-k,
+# identical to v1 cell by cell (ties may select a different optimal set).
+# ==========================================================================
+
+DEFAULT_METHOD = 'pairs'
+
+
+def solve_mspit_unu(tree: Tree, K: int, return_tables=False, method=None):
+    """Solve MSPIT-UNu. Returns (optimal_value, S) or (opt, S, tables).
+
+    method in {'pairs' (default, O(nK)), 'kk' (O(nK^2)), 'v1' (original)}.
+    """
+    if method is None:
+        method = DEFAULT_METHOD
+    if method == 'v1':
+        return _solve_mspit_unu_v1(tree, K, return_tables)
+    if method not in ('pairs', 'kk'):
+        raise ValueError(f"unknown method {method!r}")
+    return _solve_v2(tree, K, return_tables, pairs=(method == 'pairs'))
+
+
+def _solve_v2(tree, K, return_tables, pairs, profile=False):
+    INF = NEG_INF
+    Kc = max(0, K)
+    is_leaf = tree.is_leaf
+    root = tree.root
+
+    if len(tree.CD[root]) == 0:          # single-node tree
+        if profile:
+            return [0.0]
+        if return_tables:
+            return 0.0, set(), {}
+        return 0.0, set()
+
+    order = sorted(tree.branching, key=lambda v: tree.layer[v], reverse=True)
+    nl = {}      # nl[v]  = # non-leaf nodes of T_v incl. v  (branching v)
+    Ftab = {}    # Ftab[v] = (F list, r0, r1) of T_v = T^{1:p}_v
+    st = {}      # st[(v,q)] = per-branch tables and back-pointers
+
+    for v in order:
+        CDv = tree.CD[v]
+        if not CDv:
+            continue
+        Bprev = 0
+        r0 = r1 = None
+        for q, tip in enumerate(CDv, 1):
+            ch = tree.chains[tip]
+            beta = ch.beta
+            d = ch.delta
+            ws = ch.w_sum
+            # ---- g(chi, eps, k) by prefix sums (Theorem chain) ----
+            m0 = min(beta - 1, Kc)
+            m1 = min(beta, Kc)
+            g0 = [ws]
+            s = ws
+            for j in range(1, m0 + 1):
+                s += d[j]
+                g0.append(s)
+            g1 = [INF]
+            s = ws
+            for j in range(m1):
+                s += d[j]
+                g1.append(s)
+            if is_leaf[tip]:
+                subF = (0.0,)
+                nsub = 0
+            else:
+                subF = Ftab[tip][0]
+                nsub = nl[tip]
+            Bq = beta + nsub                 # non-leaf nodes of T^{q:q}_v incl v
+            LQ = min(Bq, Kc) + 1
+            LS = len(subF)
+            f0 = [INF] * LQ; f1 = [INF] * LQ
+            a0 = [-1] * LQ;  a1 = [-1] * LQ
+            # ---- single branch: f(T^{q:q}_v, eps, k) ----
+            for g, f, a, eps in ((g0, f0, a0, 0), (g1, f1, a1, 1)):
+                Lg = len(g)
+                if pairs:
+                    for k1 in range(eps, Lg):
+                        gv = g[k1]
+                        top = LQ - k1
+                        if top > LS:
+                            top = LS
+                        for k2 in range(top):
+                            val = gv + subF[k2]
+                            kk = k1 + k2
+                            if val > f[kk]:
+                                f[kk] = val
+                                a[kk] = k1
+                else:
+                    for kk in range(eps, LQ):
+                        hi = min(Lg - 1, kk)
+                        for k1 in range(eps, hi + 1):
+                            k2 = kk - k1
+                            if k2 < LS:
+                                val = g[k1] + subF[k2]
+                                if val > f[kk]:
+                                    f[kk] = val
+                                    a[kk] = k1
+            # ---- merge: f(T^{1:q}_v, eps, k), k1+k2-eps=k ----
+            if q == 1:
+                n0, n1, b0, b1 = f0, f1, None, None
+                Bnew = Bq
+            else:
+                Bnew = Bprev + Bq - 1
+                LR = min(Bnew, Kc) + 1
+                n0 = [INF] * LR; n1 = [INF] * LR
+                b0 = [-1] * LR;  b1 = [-1] * LR
+                for A, Bt, R, ar, eps in ((f0, r0, n0, b0, 0),
+                                          (f1, r1, n1, b1, 1)):
+                    LA = len(A)
+                    LB = len(Bt)
+                    if pairs:
+                        for k1 in range(eps, LA):
+                            x = A[k1]
+                            if x == INF:
+                                continue
+                            hi = LR - k1 + eps
+                            if hi > LB:
+                                hi = LB
+                            base = k1 - eps
+                            for k2 in range(eps, hi):
+                                y = Bt[k2]
+                                val = x if x < y else y
+                                kk = base + k2
+                                if val > R[kk]:
+                                    R[kk] = val
+                                    ar[kk] = k1
+                    else:
+                        for kk in range(eps, LR):
+                            for k1 in range(eps, LA):
+                                k2 = kk - k1 + eps
+                                if k2 < eps or k2 >= LB:
+                                    continue
+                                x = A[k1]
+                                y = Bt[k2]
+                                val = x if x < y else y
+                                if val > R[kk]:
+                                    R[kk] = val
+                                    ar[kk] = k1
+            st[(v, q)] = (tip, ch, f0, f1, a0, a1, n0, n1, b0, b1)
+            r0, r1 = n0, n1
+            Bprev = Bnew
+        nl[v] = Bprev
+        Fv = [r1[k] if r1[k] >= r0[k] else r0[k] for k in range(len(r0))]
+        Ftab[v] = (Fv, r0, r1)
+
+    def best_eps(v, k):
+        _, r0_, r1_ = Ftab[v]
+        return 1 if r1_[k] >= r0_[k] else 0
+
+    def trace(items):
+        """items: list of (kind, v, q, eps, k); kind in {'1q','qq'}.
+        Returns the upgrade set realising those cells (O(size) per call)."""
+        S = set()
+        stack = list(items)
+        while stack:
+            kind, v, q, eps, k = stack.pop()
+            if kind == '1q':
+                while q >= 2:
+                    rec = st[(v, q)]
+                    k1 = (rec[9] if eps else rec[8])[k]
+                    stack.append(('qq', v, q, eps, k1))
+                    k = k - k1 + eps
+                    q -= 1
+            tip, ch, f0_, f1_, a0_, a1_ = st[(v, q)][:6]
+            k1 = (a1_ if eps else a0_)[k]
+            k2 = k - k1
+            if eps:
+                for j in range(k1):
+                    S.add(ch.edges[j][0])
+            else:
+                for j in range(1, k1 + 1):
+                    S.add(ch.edges[j][0])
+            if not is_leaf[tip]:
+                stack.append(('1q', tip, len(tree.CD[tip]),
+                              best_eps(tip, k2), k2))
+        return S
+
+    p_root = len(tree.CD[root])
+    Froot = Ftab[root][0]
+    kr = len(Froot) - 1                     # = min(K, nl[root])
+    opt = Froot[kr]
+    if profile:          # F(T_{v1}, k) for every k = 0..min(K, B): one run
+        return list(Froot)
+    S = trace([('1q', root, p_root, best_eps(root, kr), kr)])
+
+    if not return_tables:
+        return opt, S
+
+    g_val, g_nds = _build_g_tables(tree, Kc)
+    fqq = {}; Fqq = {}; f1q = {}; F1q = {}
+    fqq_N = {}; Fqq_N = {}; f1q_N = {}; F1q_N = {}
+    for (v, q), rec in st.items():
+        _, _, f0_, f1_, _, _, n0_, n1_, _, _ = rec
+        for kind, t0, t1, tab, tabN, Ft, FtN in (
+                ('qq', f0_, f1_, fqq, fqq_N, Fqq, Fqq_N),
+                ('1q', n0_, n1_, f1q, f1q_N, F1q, F1q_N)):
+            for k in range(len(t0)):
+                for eps, t in ((0, t0), (1, t1)):
+                    if k < eps:
+                        continue
+                    tab[(v, q, eps, k)] = t[k]
+                    tabN[(v, q, eps, k)] = (
+                        frozenset(trace([(kind, v, q, eps, k)]))
+                        if t[k] != INF else frozenset())
+                e = 1 if t1[k] >= t0[k] else 0
+                Ft[(v, q, k)] = (t1 if e else t0)[k]
+                FtN[(v, q, k)] = tabN.get((v, q, e, k), frozenset())
+    tables = {'g_val': g_val, 'g_nds': g_nds,
+              'fqq': fqq, 'fqq_N': fqq_N, 'Fqq': Fqq, 'Fqq_N': Fqq_N,
+              'f1q': f1q, 'f1q_N': f1q_N, 'F1q': F1q, 'F1q_N': F1q_N}
+    return opt, S, tables
+
+
+def root_profile(tree: Tree, K: int, method='pairs'):
+    """Return [F(T_{v1}, k) for k = 0..min(K, B)] from ONE DP run.
+    Valid because cell k of every table depends only on cells <= k, so the
+    run with budget K contains the runs with every smaller budget."""
+    return _solve_v2(tree, K, False, pairs=(method == 'pairs'), profile=True)
