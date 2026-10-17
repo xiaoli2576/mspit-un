@@ -13,7 +13,7 @@ brute-force validation (v1.2.0 manuscript, Section 5).
 3. Timing of MCSPIT-UNu by doubling vs the one-run solution, on the
    random-recursive instances of the T2 experiment.
 
-Writes results/edge-bench-20261016.json and prints a log.
+Writes results/edge-bench-20261017.json and prints a log.
 """
 
 import json
@@ -33,7 +33,7 @@ from experiments import random_tree, comb_tree, path_tree, layered_tree
 
 NEG_INF = float('-inf')
 CAP = 90.0
-OUT = os.path.join(os.path.dirname(__file__), 'results', 'edge-bench-20261016.json')
+OUT = os.path.join(os.path.dirname(__file__), 'results', 'edge-bench-20261017.json')
 
 
 def log(*a):
@@ -241,7 +241,7 @@ def structured_timing():
 
 
 def main():
-    res = {'meta': {'date': '2026-10-16', 'python': sys.version,
+    res = {'meta': {'date': '2026-10-17', 'python': sys.version,
                     'platform': platform.platform(), 'processor': platform.processor()}}
     res['validation'] = validate()
     log('validation', res['validation'])

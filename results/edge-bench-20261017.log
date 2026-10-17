@@ -1,0 +1,37 @@
+validation {'trees': 300, 'node_cases': 2404, 'edge_cases': 2404, 'mc_cases': 1500}
+T1 n=50: avg 0.0005
+T1 n=100: avg 0.0009
+T1 n=200: avg 0.0025
+T1 n=500: avg 0.0073
+T1 n=1000: avg 0.0259
+T1 n=2000: avg 0.0828
+mc n=50 K*=[1, 2, 1] doubling 0.0004 oneshot 0.0004
+mc n=100 K*=[0, 1, 0] doubling 0.0005 oneshot 0.0008
+mc n=200 K*=[1, 1, 1] doubling 0.0013 oneshot 0.0021
+mc n=500 K*=[1, 1, 1] doubling 0.0038 oneshot 0.0098
+mc n=1000 K*=[1, 1, 1] doubling 0.0120 oneshot 0.0325
+mc n=2000 K*=[1, 2, 1] doubling 0.0283 oneshot 0.1122
+S Path n=100: 0.0000
+S Path n=200: 0.0000
+S Path n=500: 0.0001
+S Path n=1000: 0.0002
+S Path n=2000: 0.0005
+S Comb n=100: 0.0010
+S Comb n=200: 0.0036
+S Comb n=500: 0.0153
+S Comb n=1000: 0.0686
+S Comb n=2000: 0.2695
+S Layered 4-ary n=100: 0.0005
+S Layered 4-ary n=200: 0.0012
+S Layered 4-ary n=500: 0.0036
+S Layered 4-ary n=1000: 0.0105
+S Layered 4-ary n=2000: 0.0331
+edge Random K=10: lei 0.005657200003042817 alg1 0.0082
+edge Random K=30: lei 0.02283729999908246 alg1 0.0145
+edge Random K=100: lei 0.2029917000036221 alg1 0.0348
+edge Random K=300: lei 1.6750456000008853 alg1 0.0684
+edge Comb K=10: lei 0.004787700003362261 alg1 0.0089
+edge Comb K=30: lei 0.02315610001096502 alg1 0.0191
+edge Comb K=100: lei 0.1848040999902878 alg1 0.0580
+edge Comb K=300: lei 1.7507370999956038 alg1 0.1702
+written C:\Users\23857\VScode\MSPITUN\code\results\edge-bench-20261017.json
