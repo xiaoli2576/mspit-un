@@ -30,7 +30,7 @@ root-to-leaf distance is at least D.
 | `test_basic.py` | Unit tests and brute-force cross-checks |
 | `verify_onk.py` | Checks the O(nK) DP against brute force and cell by cell against the earlier DP |
 | `bench_onk.py` | Timing runs for the v1.1.0 manuscript (writes `results/onk-bench-20261016.json`) |
-| `bench_edge.py` | v1.2.0 manuscript, Section 5: brute-force validation (node, edge, MCSPIT), edge-model comparison with the O(NK^2) DP of Lei et al. and its capped version, doubling timings, structured families (writes `results/edge-bench-20261016.json`) |
+| `bench_edge.py` | v1.2.0 manuscript, Section 5: brute-force validation (node, edge, MCSPIT), edge-model comparison with the O(NK^2) DP of Lei et al., doubling timings, structured families (writes `results/edge-bench-20261016.json`) |
 | `results/` | Raw timing archives (JSON + log); canonical source of every number in the paper |
 
 ## Quick Start

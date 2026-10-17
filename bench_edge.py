@@ -4,13 +4,12 @@ brute-force validation (v1.2.0 manuscript, Section 5).
 
 1. Validation on small random trees (n <= 12), every budget K:
      node model:  Algorithm 1 == brute force
-     edge model:  Lei et al. DP (uncapped) == capped DP == Algorithm 1 on the
+     edge model:  Lei et al. DP == Algorithm 1 on the
                   subdivided tree of Proposition 2 == brute force
      MCSPIT-UNu:  doubling == one-run == brute-force K*
 2. Timing of the unit-Hamming edge problem: the O(NK^2) DP of Lei et al.
-   (Optim. Lett. 17:453-469, 2023, eqs. (4)-(5), every split k1+k2=k scanned),
-   the same DP with size-capped splits, and Algorithm 1 on the tree of
-   Proposition 2.
+   (Optim. Lett. 17:453-469, 2023, eqs. (4)-(5), every split k1+k2=k scanned)
+   and Algorithm 1 on the tree of Proposition 2.
 3. Timing of MCSPIT-UNu by doubling vs the one-run solution, on the
    random-recursive instances of the T2 experiment.
 
@@ -65,63 +64,46 @@ def postorder(tree):
     return order[::-1]
 
 
-def lei_edge_dp(tree, K, capped):
+def lei_edge_dp(tree, K):
     """Max-min DP of Lei et al. for the unit-Hamming edge problem.
 
     Branch table:  b(k) = max{w(e) + F_c(k), u(e) + F_c(k-1)}       (eq. 5)
     Merge:         f(k) = max_{k1+k2=k} min{f_prev(k1), b(k2)}       (eq. 4)
-    capped=False scans every split with k <= K (O(NK^2), as in the paper);
-    capped=True keeps each table only up to the number of edges below it
-    (larger budgets reuse the last entry) and scans only those splits.
+    Every split with k <= K is scanned (O(NK^2), as in the paper).
     """
     F = {}
     for v in postorder(tree):
         ch = tree.children[v]
         if not ch:
-            F[v] = [0.0] if capped else [0.0] * (K + 1)
+            F[v] = [0.0] * (K + 1)
             continue
         acc = None
         for c, w, u in ch:
             Fc = F.pop(c)
-            Lc = len(Fc)
-            Lb = min(Lc + 1, K + 1) if capped else K + 1
-            br = [0.0] * Lb
-            for k in range(Lb):
-                a = w + Fc[min(k, Lc - 1)]
+            br = [0.0] * (K + 1)
+            for k in range(K + 1):
+                a = w + Fc[k]
                 if k >= 1:
-                    b = u + Fc[min(k - 1, Lc - 1)]
+                    b = u + Fc[k - 1]
                     if b > a:
                         a = b
                 br[k] = a
             if acc is None:
                 acc = br
                 continue
-            if capped:
-                La = len(acc)
-                Lr = min(La + Lb - 1, K + 1)
-                res = [NEG_INF] * Lr
-                for k1 in range(La):
+            res = [NEG_INF] * (K + 1)
+            for k in range(K + 1):
+                best = NEG_INF
+                for k1 in range(k + 1):
                     a1 = acc[k1]
-                    for k2 in range(min(Lb, Lr - k1)):
-                        b2 = br[k2]
-                        val = a1 if a1 < b2 else b2
-                        if val > res[k1 + k2]:
-                            res[k1 + k2] = val
-            else:
-                res = [NEG_INF] * (K + 1)
-                for k in range(K + 1):
-                    best = NEG_INF
-                    for k1 in range(k + 1):
-                        a1 = acc[k1]
-                        b2 = br[k - k1]
-                        val = a1 if a1 < b2 else b2
-                        if val > best:
-                            best = val
-                    res[k] = best
+                    b2 = br[k - k1]
+                    val = a1 if a1 < b2 else b2
+                    if val > best:
+                        best = val
+                res[k] = best
             acc = res
         F[v] = acc
-    top = F[tree.root]
-    return top[min(K, len(top) - 1)]
+    return F[tree.root][K]
 
 
 def subdivide(tree):
@@ -175,10 +157,9 @@ def validate(n_trees=300, seed=7):
             node_vals.append(b)
             cnt['node_cases'] += 1
             eb = edge_brute(t, K)
-            e1 = lei_edge_dp(t, K, capped=False)
-            e2 = lei_edge_dp(t, K, capped=True)
+            e1 = lei_edge_dp(t, K)
             e3, _ = solve_mspit_unu(ts, K)
-            assert max(abs(x - eb) for x in (e1, e2, e3)) < 1e-9, ('edge', i, K, eb, e1, e2, e3)
+            assert max(abs(x - eb) for x in (e1, e3)) < 1e-9, ('edge', i, K, eb, e1, e3)
             cnt['edge_cases'] += 1
         lo, hi = node_vals[0], node_vals[-1]
         for D in (lo, (lo + hi) / 2, hi, hi + 1, rng.uniform(lo, hi)):
@@ -201,16 +182,15 @@ def edge_timing():
         for K in (10, 30, 100, 300):
             r = {'family': name, 'n': t.n, 'K': K}
             if not dead:
-                r['lei'], v1 = best_of(3, lei_edge_dp, t, K, False)
+                r['lei'], v1 = best_of(3, lei_edge_dp, t, K)
                 dead = r['lei'] > CAP / 3
             else:
                 v1 = None
-            r['capped'], v2 = best_of(3, lei_edge_dp, t, K, True)
             r['alg1'], (v3, _) = best_of(3, solve_mspit_unu, ts, K)
-            assert all(abs(x - v3) < 1e-9 for x in (v1, v2) if x is not None)
+            assert v1 is None or abs(v1 - v3) < 1e-9
             r['val'] = v3
             rows.append(r)
-            log(f"edge {name} K={K}: lei {r.get('lei')} capped {r['capped']:.4f} alg1 {r['alg1']:.4f}")
+            log(f"edge {name} K={K}: lei {r.get('lei')} alg1 {r['alg1']:.4f}")
     return rows
 
 

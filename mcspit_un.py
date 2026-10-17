@@ -18,6 +18,21 @@ from mspit_un import solve_mspit_unu
 from tree import Tree
 
 
+def _shortest_root_leaf_upgraded(tree: Tree):
+    """F(T, n): shortest root-leaf distance with every edge at its upgraded
+    weight u.  O(n) iterative DFS over tree.children."""
+    best = float('inf')
+    stack = [(tree.root, 0)]
+    while stack:
+        v, d = stack.pop()
+        if not tree.children[v]:
+            best = min(best, d)
+            continue
+        for (c, w, u) in tree.children[v]:
+            stack.append((c, d + u))
+    return best
+
+
 def solve_mcspit_unu(tree: Tree, D: float):
     """
     Solve MCSPIT-UNu: minimise |S| subject to min root-leaf distance >= D.
@@ -61,11 +76,12 @@ def solve_mcspit_unu(tree: Tree, D: float):
 def solve_mcspit_unu_oneshot(tree: Tree, D: float, method='pairs'):
     """MCSPIT-UNu from ONE DP run at K=n (root profile F(T,k), all k), plus
     one run at K* to recover a witness set.  Same output as solve_mcspit_unu.
+    Infeasibility is rejected by an O(n) check first.
     Time O(n^2) (+ O(n K*)) with the O(nK) DP, vs O(n^2 log n) for bisection."""
     from mspit_un import root_profile
-    prof = root_profile(tree, tree.n, method=method)
-    if prof[-1] < D:
+    if _shortest_root_leaf_upgraded(tree) < D:
         return None, None, None
+    prof = root_profile(tree, tree.n, method=method)
     k_star = next(k for k, val in enumerate(prof) if val >= D)
     val, S = solve_mspit_unu(tree, k_star, method=method)
     return k_star, val, S
@@ -75,9 +91,12 @@ def solve_mcspit_unu_doubling(tree: Tree, D: float, method='pairs'):
     """MCSPIT-UNu by budget doubling: run the DP with K = 1, 2, 4, ... (capped
     at n) and stop at the first run whose root profile reaches D.  Same output
     as solve_mcspit_unu.  Time and space O(n max{K*,1}) when feasible; an
-    infeasible instance ends with the run at K = n, i.e. O(n^2)."""
+    infeasible instance is rejected by an O(n) check before any DP run."""
     from mspit_un import root_profile
     n = tree.n
+    # O(n) infeasibility check: D is reachable iff F(T, n) >= D.
+    if _shortest_root_leaf_upgraded(tree) < D:
+        return None, None, None
     K = 1
     while True:
         prof = root_profile(tree, K, method=method)
